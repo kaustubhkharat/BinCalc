@@ -137,6 +137,11 @@ void sub(num* n1, num* n2, num *res){
 }
 
 void mul(num n1, num n2, num *res){
+	digit *p,*q;
+	int carry=0,mulres;
+	res->sign = n1.sign * n2.sign;
+	p=n1.number;
+
 	return;
 }
 
@@ -174,28 +179,4 @@ void printNum(num n){
 	}
 	printf("\n");
 	return;
-}
-
-int main(){
-	num n1, n2,res;
-	init(&n1, 1);
-	init(&n2, 1);
-	init(&res, 1);
-	// n1 = 21 n2 = 321
-	append(&n1, 1);
-	append(&n1, 2);
-	append(&n2, 1);
-	append(&n2, 2);
-	append(&n2, 3);
-
-	printNum(n1);
-	printNum(n2);
-	sub(&n1, &n2, &res);
-	printNum(res);
-
-	delNum(&n1);
-	delNum(&n2);
-	delNum(&res);
-
-	return 0;
 }

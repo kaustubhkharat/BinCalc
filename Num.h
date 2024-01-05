@@ -16,5 +16,7 @@ void add(num* n1, num* n2, num *res);
 void sub(num* n1, num* n2, num *res);
 void mul(num n1, num n2, num *res);
 void divide(num n1, num n2, num *res);
+void delNum(num *n);
+void printNum(num n);
 
 #endif
