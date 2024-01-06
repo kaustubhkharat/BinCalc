@@ -281,27 +281,3 @@ void printNum(num n){
 	printf("\n");
 	return;
 }
-
-int main(){
-	num n1,n2,res;
-	init(&n1, 1);
-	init(&n2, 1);
-	init(&res, 1);
-
-	append(&n1, 1);
-	append(&n1, 2);
-	append(&n1, 3);
-
-	printNum(n1);
-	cpyNum(&n2, &n1);
-	printNum(n2);
-	divide(&n1, &n2, &res);
-
-	printNum(res);
-
-	delNum(&n1);
-	delNum(&n2);
-	delNum(&res);
-
-	return 0;
-}
