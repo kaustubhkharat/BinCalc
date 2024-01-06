@@ -35,6 +35,15 @@ void append(num *n, int val){
 	return;
 }
 
+void appendAtBegin(num* n, int val){
+	digit *nn;
+	nn=(digit*)malloc(sizeof(digit));
+	nn->val=val;
+	nn->next = n->number;
+	n->number=nn;
+	return;
+}
+
 void add(num* n1, num* n2, num *res){
 	if (n1->sign==-1&&n2->sign==1){
 		n1->sign=1;
@@ -142,12 +151,9 @@ void sub(num* n1, num* n2, num *res){
 
 void MulBy10(num *n, int pow){
 	int i;
-	digit *nn;
+	if (pow==0) return;
 	for (i=0;i<pow;i++){
-		nn=(digit*)malloc(sizeof(digit));
-		nn->val=0;
-		nn->next=n->number;
-		n->number=nn;
+		appendAtBegin(n, 0);
 	}
 	return;
 }
@@ -163,8 +169,8 @@ void cpyNum(num *n1, num *n2){
 }
 
 void mul(num *n1, num *n2, num *res){
-	digit *p,*q,*r;
-	int mulres, carry=0, i=0, k=0;
+	digit *p,*q;
+	int mulres, carry=0, k=0;
 	num rowC, rowP, rowRes;
 	init(&rowC, 1);
 	init(&rowP, 1);
@@ -175,26 +181,26 @@ void mul(num *n1, num *n2, num *res){
 	
 	while (q){		
 		delNum(&rowRes);
-		init(&rowRes);
+		init(&rowRes, 1);
 		while(p){
-			mulres = p->val * q->val + carry;
+			mulres = (p->val * q->val) + carry;
 			carry = mulres/10;
 			mulres %= 10;
-
 			append(&rowC, mulres);
 			p=p->next;
 		}
-		MulBy10(&rowC, k);
-		k++;
-		add(rowC, rowP, rowRes);
+		if (carry) append(&rowC, carry);
+		MulBy10(&rowC, k++);
+		add(&rowC, &rowP, &rowRes);
 		delNum(&rowP);
 		init(&rowP, 1);
 		cpyNum(&rowP, &rowRes);
 		delNum(&rowC);
 		init(&rowC, 1);
+		p=n1->number;
 		q=q->next;
 	}
-	numCpy(&rowRes, res);
+	cpyNum(res, &rowRes);
 	delNum(&rowRes);
 	init(&rowRes, 1);
 	return;
@@ -230,15 +236,18 @@ void divide(num* n1, num* n2, num *res){
 		mul(n2, &q, &divres);
 		sub(n1, &divres, &temp);
 		add(&q, &add1, &temp2);
-		numCpy(&q, &temp2);
+		delNum(&q);
+		init(&q, 1);
+		cpyNum(&q, &temp2);
 		delNum(&temp2);
 		init(&temp2, 1);
 	}
-	numCpy(&q, res);
+	cpyNum(res, &q);
 	delNum(&q);
-	init(&q);
+	init(&q, 1);
 	return;
 }
+
 void delNum(num *n){
 	digit *p,*q;
 	p=n->number;
@@ -271,4 +280,28 @@ void printNum(num n){
 	}
 	printf("\n");
 	return;
+}
+
+int main(){
+	num n1,n2,res;
+	init(&n1, 1);
+	init(&n2, 1);
+	init(&res, 1);
+
+	append(&n1, 1);
+	append(&n1, 2);
+	append(&n1, 3);
+
+	printNum(n1);
+	cpyNum(&n2, &n1);
+	printNum(n2);
+	divide(&n1, &n2, &res);
+
+	printNum(res);
+
+	delNum(&n1);
+	delNum(&n2);
+	delNum(&res);
+
+	return 0;
 }
