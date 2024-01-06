@@ -14,8 +14,10 @@ typedef struct{
 void init(num *n, int sign);
 void add(num* n1, num* n2, num *res);
 void sub(num* n1, num* n2, num *res);
-void mul(num n1, num n2, num *res);
-void divide(num n1, num n2, num *res);
+void MulBy10(num *n, int pow);
+void cpyNum(num *n1, num *n2);
+void mul(num* n1, num* n2, num *res);
+void divide(num* n1, num* n2, num *res);
 void delNum(num *n);
 void printNum(num n);
 
