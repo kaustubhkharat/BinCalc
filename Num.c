@@ -20,6 +20,20 @@ void init(num *n, int sign){
 	return;
 }
 
+void atoNum(num *n, char *s){
+	int i=0;
+	if (s[0]=='-'){
+		n->sign = -1;
+		i=1;
+	}
+	while (s[i]){
+		appendAtBegin(n, s[i]-'0');
+		i++;
+	}
+
+	return;
+}
+
 void append(num *n, int val){
 	digit *p,*nn;
 	nn=(digit*)malloc(sizeof(digit));
@@ -199,6 +213,7 @@ void mul(num *n1, num *n2, num *res){
 		init(&rowC, 1);
 		p=n1->number;
 		q=q->next;
+		carry=0;
 	}
 	cpyNum(res, &rowRes);
 	delNum(&rowRes);

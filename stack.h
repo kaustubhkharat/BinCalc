@@ -8,7 +8,7 @@ typedef struct Node{
 
 typedef Node *stack;
 
-void init(stack *s);
+void init_stack(stack *s);
 void push(stack *s, void *val);
 void *pop(stack *s);
 void *peek(stack *s);

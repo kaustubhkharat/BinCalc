@@ -12,6 +12,9 @@ typedef struct{
 }num;
 
 void init(num *n, int sign);
+void append(num *n, int val);
+void appendAtBegin(num *n, int val);
+void atoNum(num *n, char *s);
 void add(num* n1, num* n2, num *res);
 void sub(num* n1, num* n2, num *res);
 void MulBy10(num *n, int pow);

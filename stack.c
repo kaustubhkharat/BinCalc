@@ -10,7 +10,7 @@ typedef struct Node{
 typedef Node *stack;
 */
 
-void init(stack *s){
+void init_stack(stack *s){
 	*s=NULL;
 	return;
 }
