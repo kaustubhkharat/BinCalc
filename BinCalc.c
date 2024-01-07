@@ -5,6 +5,19 @@
 #include "Num.h"
 #include "stack.h"
 
+int isOp(char s){
+	switch (s){
+		case '+':
+		case '-':
+		case '*':
+		case '/':
+			return 1;
+		default:
+			return 0;
+	}
+	return 0;
+}
+
 int isNum(char *s){
 	int l;
 	l=strlen(s);
@@ -72,3 +85,42 @@ num* eval(char *postfix[], int l){
 	nres = (num*) pop(&s);
 	return nres;
 }
+
+int precedence(char s){
+	switch (s){
+		case '+':
+		case '-':
+			return 1;
+		case '*':
+		case '/':
+			return 2;
+		default:
+			return 0;
+	}
+	return 0;
+}
+
+int infixToPostfix(char *infix, char *postfix[]){
+	int i=0,j=0,k=0;
+	char *op;
+	stack s;
+	init_stack(&s);
+
+	while (infix[i]){
+		if (isdigit(infix[i])||((infix[i]=='-') && isdigit(infix[i+1]))){
+			if (infix[i]=='-'){
+				postfix[j][k]=infix[i];
+				i++;
+				k++;
+			}
+			while (isdigit(infix[i])){
+					postfix[j][k] = infix[i];
+					i++;
+					k++;
+			}
+			j++;
+			k=0;
+		}
+		if (isOp(index[i])){
+				
+
