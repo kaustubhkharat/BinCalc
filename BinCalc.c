@@ -26,7 +26,7 @@ int isNum(char s[]){
 	return 0;
 }
 
-num* eval(char *postfix[], int l){
+void eval(char *postfix[], int l, num *res){
 	num *n1, *n2, *nres;
 	int i=0;
 	stack s;
@@ -83,7 +83,9 @@ num* eval(char *postfix[], int l){
 		i++;
 	}
 	nres = (num*) pop(&s);
-	return nres;
+	res->sign=nres->sign
+	cpyNum(res, nres);
+	return;
 }
 
 int precedence(char s){
@@ -162,13 +164,14 @@ int infixToPostfix(char infix[], char *postfix[]){
 }
 
 int main(){
-	char *postfix[100],infix[11]="3+5*(78+3)";
+	char *postfix[1000],infix[1000];
 	int l,i;
 	num *r;
 	r=(num*)malloc(sizeof(num));
 	init(r, 1);
+	printf("enter expression: ");
+	scanf("%s",infix);
 	l=infixToPostfix(infix, postfix);
-	for (i=0;i<l;i++) printf("%s\n",postfix[i]);
 	r=eval(postfix,l);
 	printNum(*r);
 	delNum(r);
