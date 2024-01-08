@@ -83,7 +83,7 @@ void eval(char *postfix[], int l, num *res){
 		i++;
 	}
 	nres = (num*) pop(&s);
-	res->sign=nres->sign
+	res->sign=nres->sign;
 	cpyNum(res, nres);
 	return;
 }
@@ -172,7 +172,7 @@ int main(){
 	printf("enter expression: ");
 	scanf("%s",infix);
 	l=infixToPostfix(infix, postfix);
-	r=eval(postfix,l);
+	eval(postfix,l,r);
 	printNum(*r);
 	delNum(r);
 	free(r);
