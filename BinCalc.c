@@ -18,7 +18,7 @@ int isOp(char s){
 	return 0;
 }
 
-int isNum(char *s){
+int isNum(char s[]){
 	int l;
 	l=strlen(s);
 	if (isdigit(s[0])) return 1;
@@ -100,27 +100,78 @@ int precedence(char s){
 	return 0;
 }
 
-int infixToPostfix(char *infix, char *postfix[]){
+int infixToPostfix(char infix[], char *postfix[]){
 	int i=0,j=0,k=0;
-	char *op;
+	char *op1, *op2;
 	stack s;
 	init_stack(&s);
 
 	while (infix[i]){
-		if (isdigit(infix[i])||((infix[i]=='-') && isdigit(infix[i+1]))){
+		if (isdigit(infix[i])){
+			op1 = (char *)malloc(100*sizeof(char));
 			if (infix[i]=='-'){
-				postfix[j][k]=infix[i];
-				i++;
+				op1[k]=infix[i];
 				k++;
+				i++;
 			}
 			while (isdigit(infix[i])){
-					postfix[j][k] = infix[i];
-					i++;
-					k++;
+				op1[k++]=infix[i++];
 			}
-			j++;
+			op1[k]=0;
+			postfix[j++]=op1;
 			k=0;
 		}
-		if (isOp(index[i])){
-				
+		if (infix[i]=='('){
+			op1=(char*)malloc(2*sizeof(char));
+			strcpy(op1, "(");
+			push(&s, (void*)op1);
+		}
+		if (infix[i]==')'){
+			op1=(char*)pop(&s);
+			while (op1&&strcmp(op1, "(")){
+				postfix[j++]=op1;
+				op1 = (char*) pop(&s);
+			}
+		}
+		if (isOp(infix[i])){
+			op2 = (char*) pop(&s);
+			while (op2&&(precedence(op2[0]) >= precedence(infix[i]))){
+				postfix[j++]=op2;
+				op2=(char*)pop(&s);
+			}
+			if (op2&&(precedence(op2[0])<precedence(infix[i]))){
+				push(&s, (void*) op2);
+			}
+			op1=(char*)malloc(2*sizeof(char));
+			if (infix[i]=='+') strcpy(op1, "+");
+			if (infix[i]=='-') strcpy(op1, "-");
+			if (infix[i]=='*') strcpy(op1, "*");
+			if (infix[i]=='/') strcpy(op1, "/");
+			push(&s, (void*) op1);
+		}
+		i++;
+	}
 
+	op2=(char*)pop(&s);
+
+	while (op2){
+		postfix[j++]=op2;
+		op2=(char*)pop(&s);
+	}
+	return j;
+}
+
+int main(){
+	char *postfix[100],infix[11]="3+5*(78+3)";
+	int l,i;
+	num *r;
+	r=(num*)malloc(sizeof(num));
+	init(r, 1);
+	l=infixToPostfix(infix, postfix);
+	for (i=0;i<l;i++) printf("%s\n",postfix[i]);
+	r=eval(postfix,l);
+	printNum(*r);
+	delNum(r);
+	free(r);
+	return 0;
+}
