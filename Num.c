@@ -2,21 +2,22 @@
 #include <stdio.h>
 #include "Num.h"
 
-/**
-*typedef struct digit{
-*	int val;
-*	struct digit* next;
-*}digit;
-*
-*typedef struct{
-*	int sign;
-*	digit *number;
-*}num;
-**/
+/*
+typedef struct digit{
+	int val;
+	struct digit *next,*prev;
+}digit;
+
+typedef struct{
+	int sign;
+	digit *number,*tail;
+}num;
+*/
 
 void init(num *n, int sign){
 	n->sign=sign;
 	n->number=NULL;
+	n->tail=NULL;
 	return;
 }
 
@@ -39,23 +40,85 @@ void append(num *n, int val){
 	nn=(digit*)malloc(sizeof(digit));
 	nn->val=val;
 	nn->next=NULL;
-	p=n->number;
+	p=n->tail;
 	if (p==NULL){
+		nn->next=NULL;
+		nn->prev=NULL;
 		n->number=nn;
+		n->tail=nn;
 		return;
 	}
-	while (p->next) p=p->next;
 	p->next=nn;
+	nn->prev=p;
+	nn->next=NULL;
+	n->tail=nn;
 	return;
 }
 
 void appendAtBegin(num* n, int val){
-	digit *nn;
+	digit *p,*nn;
 	nn=(digit*)malloc(sizeof(digit));
 	nn->val=val;
-	nn->next = n->number;
+	p=n->number;
+	if (p==NULL){
+		nn->next=NULL;
+		nn->prev=NULL;
+		n->number=nn;
+		n->tail=nn;
+		return;
+	}
+	p->prev=nn;
+	nn->next=p;
 	n->number=nn;
+	nn->prev=NULL;
 	return;
+}
+
+int cmpNum(num *n1, num *n2){
+	int c1=0,c2=0;
+	digit *p,*q;
+
+	p=n1->number;
+	q=n2->number;
+	
+	if (n1->sign==1&&n2->sign==-1) return 1;
+	if (n1->sign==-1&&n2->sign==1) return -1;
+
+	while (p){
+		c1++;
+		p=p->next;
+	}
+
+	while (q){
+		c2++;
+		q=q->next;
+	}
+
+	if (c1 > c2){
+		return 1;
+	}
+	if (c1 < c2){
+		return -1;
+	}
+	if (c1 == c2){
+		p=n1->tail;
+		q=n2->tail;
+
+		while (p&&q&&(p->val==q->val)){
+			p=p->prev;
+			q=q->prev;
+		}
+
+		if(p==NULL) return 0;
+
+		if (p->val > q->val){
+			return 1;
+		}
+		if (p->val < q->val){
+			return -1;
+		}
+	}
+	return 0;
 }
 
 void add(num* n1, num* n2, num *res){
@@ -117,6 +180,12 @@ void sub(num* n1, num* n2, num *res){
 	digit *p,*q;
 	p=n1->number;
 	q=n2->number;
+
+	if (cmpNum(n1, n2) == -1){
+		p=n2->number;
+		q=n1->number;
+		res->sign = -1;
+	}
 	while (p&&q){
 		diff = p->val-q->val-borrow;
 		if (diff < 0){
@@ -128,12 +197,6 @@ void sub(num* n1, num* n2, num *res){
 		append(res, diff);
 		p=p->next;
 		q=q->next;
-	}
-	if (p){
-		res->sign = n1->sign;
-	}
-	if (q){
-		res->sign = -1*n2->sign;
 	}
 	while (p){
 		diff = p->val-borrow;
@@ -174,6 +237,7 @@ void MulBy10(num *n, int pow){
 
 void cpyNum(num *n1, num *n2){
 	digit *p;
+	n1->sign=n2->sign;
 	p=n2->number;
 	while (p){
 		append(n1, p->val);

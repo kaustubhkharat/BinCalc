@@ -3,18 +3,19 @@
 
 typedef struct digit{
 	int val;
-	struct digit* next;
+	struct digit *next,*prev;
 }digit;
 
 typedef struct{
 	int sign;
-	digit *number;
+	digit *number,*tail;
 }num;
 
 void init(num *n, int sign);
 void append(num *n, int val);
 void appendAtBegin(num *n, int val);
 void atoNum(num *n, char *s);
+int comp(num *n1, num *n2);
 void add(num* n1, num* n2, num *res);
 void sub(num* n1, num* n2, num *res);
 void MulBy10(num *n, int pow);
