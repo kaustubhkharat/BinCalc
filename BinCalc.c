@@ -75,7 +75,7 @@ void eval(char *postfix[], int l, num *res){
 			n2 = (num*) pop(&s);
 			nres=(num*)malloc(sizeof(num));
 			init(nres, 1);
-			divide(n1, n2, nres);
+			divide(n2, n1, nres);
 			push(&s, (void*) nres);
 			delNum(n1);
 			delNum(n2);
@@ -109,6 +109,7 @@ int infixToPostfix(char infix[], char *postfix[]){
 	init_stack(&s);
 
 	while (infix[i]){
+		if (infix[i]==' ') i++;
 		if (isdigit(infix[i])||(infix[i]&&(infix[i]=='-'&&isdigit(infix[i+1])))){
 			op1 = (char *)malloc(100*sizeof(char));
 			if (infix[i]=='-'){
