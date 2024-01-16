@@ -121,7 +121,7 @@ int cmpNum(num *n1, num *n2){
 		p=n1->tail;
 		q=n2->tail;
 
-		while (p&&q&&(p->val==q->val)){
+		while (p&&(p->val==q->val)){
 			p=p->prev;
 			q=q->prev;
 		}
