@@ -7,7 +7,7 @@ typedef struct digit{
 }digit;
 
 typedef struct{
-	int sign;
+	int sign,len;
 	digit *number,*tail;
 }num;
 

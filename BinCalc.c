@@ -34,6 +34,7 @@ void eval(char *postfix[], int l, num *res){
 	while (i<l){
 		if (isNum(postfix[i])){
 			n1=(num*)malloc(sizeof(num));
+			init(n1, 1);
 			atoNum(n1, postfix[i]);
 			push(&s, (void*) n1);
 		}
@@ -84,7 +85,14 @@ void eval(char *postfix[], int l, num *res){
 	}
 	nres = (num*) pop(&s);
 	cpyNum(res, nres);
+	res->sign=nres->sign;
 	delNum(nres);
+	nres=(num*) pop(&s);
+	while (nres){
+		delNum(nres);
+		free(nres);
+		nres=(num*)pop(&s);
+	}
 	return;
 }
 
@@ -108,8 +116,7 @@ int infixToPostfix(char infix[], char *postfix[]){
 	stack s;
 	init_stack(&s);
 
-	while (infix[i]){
-		if (infix[i]==' ') i++;
+	while (infix[i]!='\0'){
 		if (isdigit(infix[i])){
 			op1 = (char *)malloc(100*sizeof(char));
 			while (isdigit(infix[i])){
@@ -120,12 +127,10 @@ int infixToPostfix(char infix[], char *postfix[]){
 			k=0;
 			flag=0;
 		}
-		if ((flag==1) && (infix[i]=='-')){
+		if (flag&&(infix[i]=='-')){
 			op1=(char*)malloc(100*sizeof(char));
-			op1[0]='-';
-			i++;
-			k++;
-			while (isdigit(infix[i])){
+			op1[k++]=infix[i++];
+			while(isdigit(infix[i])){
 				op1[k++]=infix[i++];
 			}
 			op1[k]=0;
@@ -144,6 +149,7 @@ int infixToPostfix(char infix[], char *postfix[]){
 				postfix[j++]=op1;
 				op1 = (char*) pop(&s);
 			}
+			free(op1);
 		}
 		if ((flag==0)&&isOp(infix[i])){
 			op2 = (char*) pop(&s);
@@ -182,14 +188,12 @@ int main(){
 	init(r, 1);
 	printf("enter \"quit\" to terminate the program\n");
 	scanf("%s",infix);
-	while (strcmp(infix, "quit")){
-		l=infixToPostfix(infix,postfix);
-		eval(postfix,l,r);
-		printNum(*r);
-		delNum(r);
-		free(r);
-		for (i=0;i<l;i++) free(postfix[i]);
-		scanf("%s",infix);
-	}
+	l=infixToPostfix(infix,postfix);
+	eval(postfix,l,r);
+	printNum(*r);
+	delNum(r);
+	init(r, 1);
+	for (i=0;i<l;i++) free(postfix[i]);
+	free(r);
 	return 0;
 }

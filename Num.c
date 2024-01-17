@@ -9,13 +9,14 @@ typedef struct digit{
 }digit;
 
 typedef struct{
-	int sign;
+	int sign,len;
 	digit *number,*tail;
 }num;
 */
 
 void init(num *n, int sign){
 	n->sign=sign;
+	n->len=0;
 	n->number=NULL;
 	n->tail=NULL;
 	return;
@@ -23,6 +24,7 @@ void init(num *n, int sign){
 
 void atoNum(num *n, char *s){
 	int i=0;
+	n->sign=1;
 	if (s[0]=='-'){
 		n->sign = -1;
 		i=1;
@@ -43,6 +45,7 @@ void removeTrailingZeroes(num *n){
 		q=p->prev;
 		free(p);
 		p=q;
+		n->len--;
 	}
 	n->tail=p;
 	p->next=NULL;
@@ -55,6 +58,7 @@ void append(num *n, int val){
 	nn->val=val;
 	nn->next=NULL;
 	p=n->tail;
+	n->len++;
 	if (p==NULL){
 		nn->next=NULL;
 		nn->prev=NULL;
@@ -74,6 +78,7 @@ void appendAtBegin(num* n, int val){
 	nn=(digit*)malloc(sizeof(digit));
 	nn->val=val;
 	p=n->number;
+	n->len++;
 	if (p==NULL){
 		nn->next=NULL;
 		nn->prev=NULL;
@@ -88,52 +93,33 @@ void appendAtBegin(num* n, int val){
 	return;
 }
 
-int cmpNum(num *n1, num *n2){
-	int c1=0,c2=0;
+int cmpNum(num *n1, num *n2){ //n1-n2 sign
 	digit *p,*q;
 
 	if (n1&&n2==NULL) return 1;
 	if (n1==NULL&&n2) return -1;
-	
-	p=n1->number;
-	q=n2->number;
-	
+	printf("n1 length: %d n1:",n1->len);
+	printNum(*n1);
+	printf("n2 length:%d n2:",n2->len);
+	printNum(*n2);
 	if (n1->sign==1&&n2->sign==-1) return 1;
 	if (n1->sign==-1&&n2->sign==1) return -1;
+	
+	if (n1->len > n2->len) return 1;
+	if (n1->len < n2->len) return -1;
+
+	p=n1->tail;
+	q=n2->tail;
 
 	while (p){
-		c1++;
-		p=p->next;
-	}
-
-	while (q){
-		c2++;
-		q=q->next;
-	}
-
-	if (c1 > c2){
-		return n1->sign;
-	}
-	if (c1 < c2){
-		return -1*n1->sign;
-	}
-	if (c1 == c2){
-		p=n1->tail;
-		q=n2->tail;
-
-		while (p&&(p->val==q->val)){
-			p=p->prev;
-			q=q->prev;
-		}
-
-		if(p==NULL) return 0;
-
 		if (p->val > q->val){
 			return n1->sign;
 		}
 		if (p->val < q->val){
 			return -1*n1->sign;
 		}
+		p=p->prev;
+		q=q->prev;
 	}
 	return 0;
 }
@@ -183,6 +169,8 @@ void add(num* n1, num* n2, num *res){
 }
 
 void sub(num* n1, num* n2, num *res){
+	int diff, borrow=0,tmp;
+	digit *p,*q;
 	if (n1->sign==1&&n2->sign==-1){
 		n2->sign=1;
 		add(n1, n2, res);
@@ -193,16 +181,17 @@ void sub(num* n1, num* n2, num *res){
 		add(n1, n2, res);
 		return;
 	}
-	int diff, borrow=0;
-	digit *p,*q;
-	p=n1->number;
-	q=n2->number;
-
-	if (cmpNum(n1, n2) == -1){
+	tmp=cmpNum(n1, n2);
+	printf("value of compare: %d\n",tmp);
+	if (tmp == -1){
 		p=n2->number;
 		q=n1->number;
 		res->sign = -1;
+	}else{
+		p=n1->number;
+		q=n2->number;
 	}
+
 	while (p&&q){
 		diff = p->val-q->val-borrow;
 		if (diff < 0){
@@ -226,20 +215,7 @@ void sub(num* n1, num* n2, num *res){
 		append(res, diff);
 		p=p->next;
 	}
-	while (q){
-		diff = q->val-borrow;
-		if (diff < 0){
-			borrow = 1;
-			diff += 10;
-		}else{
-			borrow = 0;
-		}
-		append(res, diff);
-		q=q->next;
-	}
-	if (borrow){
-		append(res, borrow);
-	}
+	removeTrailingZeroes(res);
 	return;
 }
 
@@ -394,18 +370,11 @@ void delNum(num *n){
 
 void printNum(num n){
 	digit *p;
-	int i=0, arr[100];
-	
-	p=n.number;
-
-	while (p){
-		arr[i++] = p->val;
-		p=p->next;
-	}
+	p=n.tail;
 	if (n.sign==-1) printf("-");
-	i--;
-	for (;i>=0;i--){
-		printf("%d",arr[i]);
+	while (p){
+		printf("%d",p->val);
+		p=p->prev;
 	}
 	printf("\n");
 	return;
