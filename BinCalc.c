@@ -47,6 +47,8 @@ void eval(char *postfix[], int l, num *res){
 			push(&s, (void*) nres);
 			delNum(n1);
 			delNum(n2);
+			free(n1);
+			free(n2);
 		}
 
 		if (strcmp(postfix[i], "-")==0){
@@ -58,6 +60,8 @@ void eval(char *postfix[], int l, num *res){
 			push(&s, (void*) nres);
 			delNum(n1);
 			delNum(n2);
+			free(n1);
+			free(n2);
 		}
 
 		if (strcmp(postfix[i], "*")==0){
@@ -69,6 +73,8 @@ void eval(char *postfix[], int l, num *res){
 			push(&s, (void*) nres);
 			delNum(n1);
 			delNum(n2);
+			free(n1);
+			free(n2);
 		}
 
 		if (strcmp(postfix[i], "/")==0){
@@ -80,6 +86,8 @@ void eval(char *postfix[], int l, num *res){
 			push(&s, (void*) nres);
 			delNum(n1);
 			delNum(n2);
+			free(n1);
+			free(n2);
 		}
 		i++;
 	}
@@ -117,7 +125,7 @@ int infixToPostfix(char infix[], char *postfix[]){
 	init_stack(&s);
 
 	while (infix[i]!='\0'){
-		if (isdigit(infix[i])){
+		if (flag&&isdigit(infix[i])){
 			op1 = (char *)malloc(100*sizeof(char));
 			while (isdigit(infix[i])){
 				op1[k++]=infix[i++];
@@ -188,12 +196,15 @@ int main(){
 	init(r, 1);
 	printf("enter \"quit\" to terminate the program\n");
 	scanf("%s",infix);
-	l=infixToPostfix(infix,postfix);
-	eval(postfix,l,r);
-	printNum(*r);
-	delNum(r);
-	init(r, 1);
-	for (i=0;i<l;i++) free(postfix[i]);
+	while (strcmp(infix, "quit")){
+		l=infixToPostfix(infix,postfix);
+		eval(postfix,l,r);
+		printNum(*r);
+		delNum(r);
+		init(r, 1);
+		for (i=0;i<l;i++) free(postfix[i]);
+		scanf("%s",infix);
+	}
 	free(r);
 	return 0;
 }

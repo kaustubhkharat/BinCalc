@@ -98,10 +98,6 @@ int cmpNum(num *n1, num *n2){ //n1-n2 sign
 
 	if (n1&&n2==NULL) return 1;
 	if (n1==NULL&&n2) return -1;
-	printf("n1 length: %d n1:",n1->len);
-	printNum(*n1);
-	printf("n2 length:%d n2:",n2->len);
-	printNum(*n2);
 	if (n1->sign==1&&n2->sign==-1) return 1;
 	if (n1->sign==-1&&n2->sign==1) return -1;
 	
@@ -169,7 +165,7 @@ void add(num* n1, num* n2, num *res){
 }
 
 void sub(num* n1, num* n2, num *res){
-	int diff, borrow=0,tmp;
+	int diff, borrow=0;
 	digit *p,*q;
 	if (n1->sign==1&&n2->sign==-1){
 		n2->sign=1;
@@ -181,9 +177,7 @@ void sub(num* n1, num* n2, num *res){
 		add(n1, n2, res);
 		return;
 	}
-	tmp=cmpNum(n1, n2);
-	printf("value of compare: %d\n",tmp);
-	if (tmp == -1){
+	if (cmpNum(n1, n2) == -1){
 		p=n2->number;
 		q=n1->number;
 		res->sign = -1;
